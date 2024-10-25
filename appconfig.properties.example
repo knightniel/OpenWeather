@@ -1,0 +1,7 @@
+release.googleOauthServerClientId=GOOGLE_OAUTH_SERVER_CLIENT_ID
+debug.googleOauthServerClientId=GOOGLE_OAUTH_SERVER_CLIENT_ID
+development.googleOauthServerClientId=GOOGLE_OAUTH_SERVER_CLIENT_ID
+
+release.openWeatherApiKey=OPEN_WEATHER_APP_ID
+debug.openWeatherApiKey=OPEN_WEATHER_APP_ID
+development.openWeatherApiKey=OPEN_WEATHER_APP_ID

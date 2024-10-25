@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.App.Splash" parent="Theme.SplashScreen">
+        <!--    <style name="Theme.SitAndRelax.Splash" parent="Theme.SplashScreen.IconBackground">-->
+        <!--        <item name="windowSplashScreenBackground">#F4FAFF</item>-->
+        <item name="android:windowBackground">@color/background</item>
+        <item name="windowSplashScreenBackground">@color/base</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+
+        <!--         The value needs to be 0 if the icon is animated.-->
+        <!--        <item name="windowSplashScreenAnimationDuration">700</item>-->
+        <!--        <item name="windowSplashScreenIconBackgroundColor">#FFFFFF</item>-->
+        <item name="postSplashScreenTheme">@style/Theme.App</item>
+    </style>
+</resources>
