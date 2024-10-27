@@ -27,6 +27,11 @@ A simple Android weather app that utilizes:
     + Second Tab: Display list of data fetched for the selected city/location
 + User sign-in and sign-up using Google or email/password authentication with Firebase
 
+## Screenshots:
+
+![](screenshots/screenshot1.png)
+![](screenshots/screenshot2.png)
+
 ## Setting up the project:
 
 ### Application configurations:
