@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Looper
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -155,7 +156,6 @@ class LocationSelectionScreenViewModel @Inject constructor(
                 val location = locationResult.locations.maxByOrNull { it.accuracy } ?: locationResult.lastLocation
                 if (location != null) {
                     val currentLocation = _currentLocation.value
-
                     log(
                         tag = "Location",
                         message = "onLocationChanged:\n" +
@@ -182,25 +182,31 @@ class LocationSelectionScreenViewModel @Inject constructor(
 
     fun useDeviceLocation() {
         viewModelScope.launch {
-            if (!(ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            )) {
-                _currentLocation.value = null
-                _gettingDeviceLocation.value = true
-                _searchLocation.emit(Resource.Loading())
+            val withPermission = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val withGpsProvider = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            val withNetworkProvider = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
-                fusedLocationClient.requestLocationUpdates(
-                    locationRequest,
-                    locationListener,
-                    Looper.getMainLooper()
-                )
-            } else {
-                _searchLocation.emit(Resource.Error("Location permission is required."))
+            when {
+                withPermission && (withGpsProvider || withNetworkProvider) -> {
+                    _currentLocation.value = null
+                    _gettingDeviceLocation.value = true
+                    _searchLocation.emit(Resource.Loading())
+
+                    fusedLocationClient.requestLocationUpdates(
+                        locationRequest,
+                        locationListener,
+                        Looper.getMainLooper()
+                    )
+                }
+                withPermission -> {
+                    _gettingDeviceLocation.value = false
+                    _searchLocation.emit(Resource.Error("Please turn on device location."))
+                }
+                else -> {
+                    _gettingDeviceLocation.value = false
+                    _searchLocation.emit(Resource.Error("Location permission is required."))
+                }
             }
         }
     }
