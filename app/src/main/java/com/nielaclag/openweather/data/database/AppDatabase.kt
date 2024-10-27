@@ -21,6 +21,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 /**
  * Created by Niel on 10/21/2024.
  */
+@TypeConverters(
+    LocalUserConverter::class,
+    WeatherConverter::class
+)
 @Database(
     entities = [
         LocalUserEntity::class,
@@ -29,10 +33,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
     ],
     version = 1,
     exportSchema = false
-)
-@TypeConverters(
-    LocalUserConverter::class,
-    WeatherConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
 

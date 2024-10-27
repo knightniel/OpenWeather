@@ -99,7 +99,16 @@ fun LocationSelectionScreen(
 //            // Handle this case, e.g., show an error message
 //            locationSelectionScreenViewModel.useDeviceLocation()
 //        }
-        locationSelectionScreenViewModel.useDeviceLocation()
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val withGpsProvider = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val withNetworkProvider = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        if (withGpsProvider || withNetworkProvider) {
+            locationSelectionScreenViewModel.useDeviceLocation()
+        } else {
+            scope.launch {
+                snackbarHostState.showSnackbar("Please turn on device location.")
+            }
+        }
     }
 
     val permissionStateFineLocation = rememberPermissionRequestState(
@@ -115,7 +124,6 @@ fun LocationSelectionScreen(
                 if (!withGps && !hasNetwork) {
                     locationSettingsLauncher.launch(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 } else {
-//                    locationSelectionScreenViewModel.useDeviceLocation()
                     locationSelectionScreenViewModel.useDeviceLocation()
                 }
             } else {

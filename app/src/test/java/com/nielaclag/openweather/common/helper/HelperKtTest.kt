@@ -42,7 +42,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInDays on any order`() {
         // Thursday, October 24, 2024 6:32:37 PM
-        val dateFrom =  Date(1729794757000)
+        val dateFrom = Date(1729794757000)
         // Saturday, October 26, 2024 6:32:37 PM
         val dateTo = Date(1729967557000)
 
@@ -62,7 +62,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInDays in order`() {
         // Thursday, October 24, 2024 6:32:37 PM
-        val dateFrom =  Date(1729794757000)
+        val dateFrom = Date(1729794757000)
         // Saturday, October 26, 2024 6:32:37 PM
         val dateTo = Date(1729967557000)
 
@@ -82,7 +82,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInHours on any order`() {
         // Saturday, October 26, 2024 6:32:37 PM
-        val dateFrom =  Date(1729967557000)
+        val dateFrom = Date(1729967557000)
         // Saturday, October 26, 2024 8:32:37 PM
         val dateTo = Date(1729974757000)
 
@@ -102,7 +102,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInHours in order`() {
         // Saturday, October 26, 2024 6:32:37 PM
-        val dateFrom =  Date(1729967557000)
+        val dateFrom = Date(1729967557000)
         // Saturday, October 26, 2024 8:32:37 PM
         val dateTo = Date(1729974757000)
 
@@ -122,7 +122,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInMinutes on any order`() {
         // Saturday, October 26, 2024 6:32:37 PM
-        val dateFrom =  Date(1729967557000)
+        val dateFrom = Date(1729967557000)
         // Saturday, October 26, 2024 6:34:37 PM
         val dateTo = Date(1729967677000)
 
@@ -142,7 +142,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInMinutes in order`() {
         // Saturday, October 26, 2024 6:32:37 PM
-        val dateFrom =  Date(1729967557000)
+        val dateFrom = Date(1729967557000)
         // Saturday, October 26, 2024 6:34:37 PM
         val dateTo = Date(1729967677000)
 
@@ -162,7 +162,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInSeconds on any order`() {
         // Saturday, October 26, 2024 6:34:37 PM
-        val dateFrom =  Date(1729967677000)
+        val dateFrom = Date(1729967677000)
         // Saturday, October 26, 2024 6:34:39 PM
         val dateTo = Date(1729967679000)
 
@@ -182,7 +182,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInSeconds in order`() {
         // Saturday, October 26, 2024 6:34:37 PM
-        val dateFrom =  Date(1729967677000)
+        val dateFrom = Date(1729967677000)
         // Saturday, October 26, 2024 6:34:39 PM
         val dateTo = Date(1729967679000)
 
@@ -202,7 +202,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInMilliSeconds on any order`() {
         // Saturday, October 26, 2024 6:34:37 PM
-        val dateFrom =  Date(1729967677000)
+        val dateFrom = Date(1729967677000)
         // Saturday, October 26, 2024 6:34:39 PM
         val dateTo = Date(1729967679000)
 
@@ -222,7 +222,7 @@ class HelperKtTest {
     @Test
     fun `dateDiffInMilliSeconds in order`() {
         // Saturday, October 26, 2024 6:34:37 PM
-        val dateFrom =  Date(1729967677000)
+        val dateFrom = Date(1729967677000)
         // Saturday, October 26, 2024 6:34:39 PM
         val dateTo = Date(1729967679000)
 
@@ -242,7 +242,7 @@ class HelperKtTest {
     @Test
     fun `toCalendar, valid time epoch`() {
         // Saturday, October 26, 2024 6:34:37 PM
-        val date =  Date(1729967677000)
+        val date = Date(1729967677000)
         val calendar = date.toCalendar()
 
         assertThat(date.time).isEqualTo(calendar.time.time)
@@ -295,7 +295,7 @@ class HelperKtTest {
     }
 
     @Test
-    fun `haversine, within half km distance tolerance`() {
+    fun `haversine, compute distance of two coordinates, within half km tolerance`() {
         val coordinateInPasig = Pair(
             14.585664324,
             121.05666644
@@ -316,7 +316,7 @@ class HelperKtTest {
     }
 
     @Test
-    fun `haversine, more than half km distance tolerance`() {
+    fun `haversine, compute distance of two coordinates, 5 km distance and half km tolerance`() {
         val coordinateInPasig = Pair(
             14.585664324,
             121.05666644
