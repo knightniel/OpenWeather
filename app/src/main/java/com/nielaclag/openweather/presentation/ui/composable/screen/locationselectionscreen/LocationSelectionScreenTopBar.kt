@@ -68,7 +68,7 @@ fun LocationSelectionScreenTopBar(
     onUseCurrentLocation: () -> Unit,
     showUserOptions: () -> Unit
 ) {
-    val backHandler = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val focusManager = LocalFocusManager.current
     val focusRequester = remember {
         FocusRequester()
@@ -114,7 +114,7 @@ fun LocationSelectionScreenTopBar(
             if (initialLocation != null) {
                 IconButton(
                     onClick = {
-                        backHandler?.onBackPressed()
+                        onBackPressedDispatcher?.onBackPressed()
                     },
                     modifier = Modifier
 //                        .size(TextFieldDefaults.MinHeight)
@@ -235,6 +235,7 @@ fun LocationSelectionScreenTopBar(
             Button(
                 onClick = {
                     multipleEventsCutter {
+                        focusManager.clearFocus()
                         locationString = ""
                         onUseCurrentLocation()
                     }

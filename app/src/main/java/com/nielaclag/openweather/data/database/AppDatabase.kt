@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.nielaclag.openweather.data.database.converter.LocalUserConverter
 import com.nielaclag.openweather.data.database.converter.WeatherConverter
-import com.nielaclag.openweather.data.database.dao.CurrentWeatherDao
+import com.nielaclag.openweather.data.database.dao.WeatherDao
 import com.nielaclag.openweather.data.database.dao.LocalUserDao
 import com.nielaclag.openweather.data.database.dao.LocationInfoDao
 import com.nielaclag.openweather.data.model.room.entity.LocalUserEntity
@@ -38,7 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract val localUserDao: LocalUserDao
     abstract val locationInfoDao: LocationInfoDao
-    abstract val currentWeatherDao: CurrentWeatherDao
+    abstract val weatherDao: WeatherDao
 
     companion object {
 

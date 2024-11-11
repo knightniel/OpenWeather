@@ -245,7 +245,7 @@ class HelperKtTest {
         val date = Date(1729967677000)
         val calendar = date.toCalendar()
 
-        assertThat(date.time).isEqualTo(calendar.time.time)
+        assertThat(date.time).isEqualTo(calendar.timeInMillis)
     }
 
     @Test

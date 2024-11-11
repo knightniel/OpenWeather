@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.Packaging
 import java.util.Properties
 import java.io.FileInputStream
 
@@ -65,7 +66,8 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.nielaclag.openweather.util.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -75,7 +77,7 @@ android {
         release {
             isShrinkResources = true
             isMinifyEnabled = true
-            isDebuggable = true
+            isDebuggable = false
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -137,19 +139,57 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += "META-INF/LICENSE.md"
+            merges += "META-INF/LICENSE-notice.md"
         }
     }
 }
 
 dependencies {
-    testImplementation(libs.jUnit)
-    testImplementation(libs.google.truth)
-    testImplementation(libs.androidx.arch.core)
+    // TEST
+    testImplementation(libs.test.jUnit)
+    testImplementation(libs.test.androidx.core)
+    testImplementation(libs.test.androidx.core.ktx)
+    testImplementation(libs.test.androidx.jUnit)
+    testImplementation(libs.test.androidx.jUnit.ktx)
+    testImplementation(libs.test.androidx.espresso.idlingResource)
+    testImplementation(libs.test.androidx.arch.core)
+    testImplementation(libs.test.google.truth)
+    testImplementation(libs.test.coroutines.test)
+    testImplementation(libs.test.mockito.core)
+    testImplementation(libs.test.mockito.inline)
+    testImplementation(libs.test.mockk.android)
+    testImplementation(libs.test.mockk.agent)
 
-    androidTestImplementation(libs.androidx.jUnit)
-    androidTestImplementation(libs.androidx.espresso)
-    androidTestImplementation(libs.androidx.arch.core)
-    androidTestImplementation(libs.google.truth)
+    testImplementation(libs.test.turbine)
+    testImplementation(libs.test.robolectric)
+    testImplementation(libs.test.hilt)
+    testImplementation(libs.test.room)
+    kspTest(libs.hilt.compiler)
+
+    // ANDROID TEST
+    androidTestImplementation(libs.test.jUnit)
+    androidTestImplementation(libs.test.androidx.core)
+    androidTestImplementation(libs.test.androidx.core.ktx)
+    androidTestImplementation(libs.test.androidx.runner)
+    androidTestImplementation(libs.test.androidx.rules)
+    androidTestImplementation(libs.test.androidx.jUnit)
+    androidTestImplementation(libs.test.androidx.jUnit.ktx)
+    androidTestImplementation(libs.test.androidx.espresso.core)
+    androidTestImplementation(libs.test.okhttp3.idlingResource)
+    androidTestImplementation(libs.test.androidx.arch.core)
+    androidTestImplementation(libs.test.google.truth)
+    androidTestImplementation(libs.test.mockito.android)
+    androidTestImplementation(libs.test.mockk.android)
+    androidTestImplementation(libs.test.mockk.agent)
+
+    androidTestImplementation(libs.test.turbine)
+    androidTestImplementation(libs.test.mockWebServer)
+    androidTestImplementation(libs.test.robolectric)
+    androidTestImplementation(libs.test.hilt)
+    kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.test.compose)
 
     // TIMBER
     implementation(libs.timber)
@@ -216,10 +256,7 @@ dependencies {
 
     //// JETPACK COMPOSE BOM {
     implementation(platform(libs.compose.bom))
-    androidTestImplementation(platform(libs.compose.bom))
 
-    // Material Design 2
-//    implementation(libs.compose.material2)
     // Material Design 3
     implementation(libs.compose.material3)
     implementation(libs.compose.material3.windowSize)
@@ -240,8 +277,6 @@ dependencies {
 
     // Add full set of material icons
     implementation(libs.compose.animation)
-
-    androidTestImplementation(libs.compose.test)
     //// }
 
     // COIL
@@ -264,8 +299,6 @@ dependencies {
     ksp(libs.room.compiler)
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation(libs.room.extensions)
-    // optional - Test helpers
-    implementation(libs.room.helpers)
     implementation(libs.room.paging)
     //// }
 

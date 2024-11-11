@@ -2,18 +2,13 @@ package com.nielaclag.openweather.domain.usecase.remote.openweather
 
 import com.nielaclag.openweather.common.constants.Constants
 import com.nielaclag.openweather.common.helper.toUrlEncoded
-import com.nielaclag.openweather.common.helper.toJsonObject
-import com.nielaclag.openweather.common.util.OpenWeatherError
+import com.nielaclag.openweather.common.util.DataResponse
 import com.nielaclag.openweather.common.util.Resource
 import com.nielaclag.openweather.data.mapper.toDomain
 import com.nielaclag.openweather.domain.model.weather.LocationInfo
 import com.nielaclag.openweather.domain.repository.remote.OpenWeatherRepository
-import com.squareup.moshi.Moshi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
@@ -21,8 +16,7 @@ import javax.inject.Inject
  * Created by Niel on 10/21/2024.
  */
 class GetLocationsByName @Inject constructor(
-    private val repository: OpenWeatherRepository,
-    private val moshi: Moshi
+    private val repository: OpenWeatherRepository
 ) {
     operator fun invoke(
         cityName: String,
@@ -31,50 +25,42 @@ class GetLocationsByName @Inject constructor(
         limit: Int
     ): Flow<Resource<Array<LocationInfo>>> = callbackFlow {
         send(Resource.Loading())
-        delay(1000)
         try {
-            val response = repository.getLocationsByName(
+            val dataResponse = repository.getLocationsByName(
                 appId = Constants.OPEN_WEATHER_API_KEY,
-                cityName = cityName.toUrlEncoded(),
-                stateCode = stateCode,
-                countryCode = countryCode,
+                query = "${ cityName.toUrlEncoded() },${ stateCode.toUrlEncoded() },${ countryCode.toUrlEncoded() }",
                 limit = limit
             )
-            if (response.isSuccessful) {
-                val data = response.body()?.map { it.toDomain() }?.toTypedArray() ?: arrayOf()
-                send(Resource.Success(code = response.code(), data = data))
+            if (dataResponse is DataResponse.Success) {
+                send(
+                    Resource.Success(
+                        code = dataResponse.statusCode,
+                        message = dataResponse.message,
+                        data = dataResponse.data?.map { it.toDomain() }?.toTypedArray() ?: arrayOf()
+                    )
+                )
             } else {
-                try {
-                    val responseError = response.errorBody()?.toJsonObject<OpenWeatherError>(moshi)
-                    send(
-                        Resource.Error(
-                            code = response.code(),
-                            message = responseError?.message ?: "An unexpected error occurred."
-                        )
+                send(
+                    Resource.Error(
+                        code = dataResponse.statusCode,
+                        message = dataResponse.message ?: "An unexpected error occurred."
                     )
-                } catch (_: Exception) {
-                    send(
-                        Resource.Error(
-                            code = response.code(),
-                            message = "An unexpected error occurred."
-                        )
-                    )
-                }
+                )
             }
-        } catch (e: HttpException) {
+        } catch (e: IOException) {
             send(
                 Resource.Error(
-                    code = e.code(),
-                    message = e.message() ?: "An unexpected error occurred."
+                    message = e.message ?: "Couldn't reach server. Check your internet connection."
                 )
             )
-        } catch (e: IOException) {
-            send(Resource.Error(message = "Couldn't reach server. Check your internet connection."))
         } catch (e: Exception) {
-            send(Resource.Error(message = "An unexpected error occurred."))
+            send(
+                Resource.Error(
+                    message = "An unexpected error occurred."
+                )
+            )
         } finally {
-            awaitClose {
-            }
+            close()
         }
     }
 }

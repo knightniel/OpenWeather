@@ -8,7 +8,7 @@ import timber.log.Timber
 /**
  * Created by Niel on 10/21/2024.
  */
-class TimberInitializer: Initializer<Unit> {
+class TimberInitializer : Initializer<Unit> {
 
     private val isDebug: Boolean = Constants.LOGGING_ENABLED
 

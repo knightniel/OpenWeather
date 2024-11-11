@@ -5,11 +5,14 @@ import com.nielaclag.openweather.data.remote.api.OpenWeatherApi
 import com.nielaclag.openweather.data.repository.dao.LocalUserDaoRepositoryImpl
 import com.nielaclag.openweather.data.repository.dao.LocationInfoDaoRepositoryImpl
 import com.nielaclag.openweather.data.repository.dao.WeatherDaoRepositoryImpl
+import com.nielaclag.openweather.data.repository.remote.AuthenticationRepositoryImpl
 import com.nielaclag.openweather.data.repository.remote.OpenWeatherRepositoryImpl
 import com.nielaclag.openweather.domain.repository.dao.LocalUserDaoRepository
 import com.nielaclag.openweather.domain.repository.dao.LocationInfoDaoRepository
 import com.nielaclag.openweather.domain.repository.dao.WeatherDaoRepository
+import com.nielaclag.openweather.domain.repository.remote.AuthenticationRepository
 import com.nielaclag.openweather.domain.repository.remote.OpenWeatherRepository
+import com.nielaclag.openweather.domain.util.FirebaseAuthHandler
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -28,32 +31,38 @@ object RepositoryModule {
     /// ROOM DAO
     /// ROOM DAO
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideLocalUserDaoRepository(database: AppDatabase): LocalUserDaoRepository {
         return LocalUserDaoRepositoryImpl(database.localUserDao)
     }
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideLocationInfoDaoRepository(database: AppDatabase): LocationInfoDaoRepository {
         return LocationInfoDaoRepositoryImpl(database.locationInfoDao)
     }
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideCurrentWeatherDaoRepository(database: AppDatabase): WeatherDaoRepository {
-        return WeatherDaoRepositoryImpl(database.currentWeatherDao)
+        return WeatherDaoRepositoryImpl(database.weatherDao)
     }
 
     /// REMOTE
     /// REMOTE
     /// REMOTE
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideOpenWeatherRepository(openWeatherApi: OpenWeatherApi, moshi: Moshi): OpenWeatherRepository {
         return OpenWeatherRepositoryImpl(openWeatherApi, moshi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthenticationRepository(firebaseAuthHandler: FirebaseAuthHandler, moshi: Moshi): AuthenticationRepository {
+        return AuthenticationRepositoryImpl(firebaseAuthHandler, moshi)
     }
 
 

@@ -11,7 +11,7 @@ import javax.inject.Inject
 class InsertLocationInfo @Inject constructor(
     private val repository: LocationInfoDaoRepository
 ) {
-    suspend operator fun invoke(locationInfo: LocationInfo): Long {
+    suspend operator fun invoke(locationInfo: LocationInfo) {
         return repository.insertData(locationInfo.toEntity())
     }
 }

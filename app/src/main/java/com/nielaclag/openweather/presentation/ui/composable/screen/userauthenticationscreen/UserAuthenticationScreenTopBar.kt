@@ -2,13 +2,10 @@ package com.nielaclag.openweather.presentation.ui.composable.screen.userauthenti
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
 import coil.compose.rememberAsyncImagePainter
 import com.nielaclag.openweather.R
 import com.nielaclag.openweather.presentation.theme.AppDimension
@@ -35,7 +31,7 @@ import com.nielaclag.openweather.presentation.theme.AppDimension
 fun UserAuthenticationScreenTopBar(
     withBackNavigation: Boolean
 ) {
-    val backHandler = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -64,7 +60,7 @@ fun UserAuthenticationScreenTopBar(
             ) {
                 IconButton(
                     onClick = {
-                        backHandler?.onBackPressed()
+                        onBackPressedDispatcher?.onBackPressed()
                     },
                     modifier = Modifier
                         .clip(CircleShape)

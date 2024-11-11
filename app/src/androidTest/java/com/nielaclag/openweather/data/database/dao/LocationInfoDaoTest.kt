@@ -1,60 +1,50 @@
 package com.nielaclag.openweather.data.database.dao
 
-import android.content.Context
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SmallTest
+import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import com.nielaclag.openweather.data.database.AppDatabase
-import com.nielaclag.openweather.data.database.converter.LocalUserConverter
-import com.nielaclag.openweather.data.database.converter.WeatherConverter
 import com.nielaclag.openweather.data.mapper.toEntity
-import com.nielaclag.openweather.data.model.moshiadapter.JsonObjectAdapter
 import com.nielaclag.openweather.domain.model.weather.LocationInfo
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.io.IOException
+import javax.inject.Inject
 
 /**
  * Created by Niel on 10/27/2024.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
+@HiltAndroidTest
+@Config(application = HiltTestApplication::class)
 @RunWith(AndroidJUnit4::class)
-@SmallTest
+@MediumTest
 class LocationInfoDaoTest {
 
-    private lateinit var moshi: Moshi
-    private lateinit var database: AppDatabase
+    @get:Rule
+    val hiltRule = HiltAndroidRule(this)
+
+    @Inject
+    lateinit var database: AppDatabase
     private lateinit var dao: LocationInfoDao
 
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
-
     @Before
-    fun setup() {
-        moshi = Moshi
-            .Builder()
-            .addLast(KotlinJsonAdapterFactory())
-            .add(JsonObjectAdapter())
-            .build()
-
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        database = Room.inMemoryDatabaseBuilder(
-            context,
-            AppDatabase::class.java
-        )
-            .allowMainThreadQueries()
-            .addTypeConverter(LocalUserConverter(moshi = moshi))
-            .addTypeConverter(WeatherConverter(moshi = moshi))
-            .build()
+    fun setUp() {
+        Dispatchers.setMain(Dispatchers.Unconfined)
+        hiltRule.inject()
 
         dao = database.locationInfoDao
     }
@@ -63,11 +53,12 @@ class LocationInfoDaoTest {
     @Throws(IOException::class)
     fun tearDown() {
         database.close()
+        Dispatchers.resetMain()
     }
 
     @Test
     @Throws(IOException::class)
-    fun insertAndGetData() = runTest {
+    fun insertData_and_getData_should_insert_and_get_the_data() = runTest {
         val data = LocationInfo(
             name = "Pasig",
             latitude = 14.5605166,
@@ -83,7 +74,35 @@ class LocationInfoDaoTest {
 
     @Test
     @Throws(IOException::class)
-    fun insertAndGetDataFlow() = runTest {
+    fun insertData_should_replace_the_data_with_the_same_id() = runTest {
+        val data = LocationInfo(
+            name = "Pasig",
+            latitude = 14.5605166,
+            longitude = 121.0764343,
+            country = "PH",
+            state = null
+        ).toEntity()
+        dao.insertData(data)
+
+        var fetchedData = dao.getData()
+        assertThat(fetchedData).isEqualTo(data)
+
+        val data2 = LocationInfo(
+            name = "Pasig",
+            latitude = 51.5073219,
+            longitude = -0.1276474,
+            country = "GB",
+            state = "England"
+        ).toEntity()
+        dao.insertData(data2)
+
+        fetchedData = dao.getData()
+        assertThat(fetchedData).isEqualTo(data2)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun getDataFlow_should_get_the_data() = runTest {
         val data = LocationInfo(
             name = "Pasig",
             latitude = 14.5605166,
@@ -99,35 +118,7 @@ class LocationInfoDaoTest {
 
     @Test
     @Throws(IOException::class)
-    fun updateData() = runTest {
-        val data = LocationInfo(
-            name = "Pasig",
-            latitude = 14.5605166,
-            longitude = 121.0764343,
-            country = "PH",
-            state = null
-        ).toEntity()
-
-        dao.insertData(data)
-        var fetchedData = dao.getData()
-        assertThat(fetchedData).isEqualTo(data)
-
-        val updatedData = LocationInfo(
-            name = "Pasig",
-            latitude = 51.5073219,
-            longitude = -0.1276474,
-            country = "GB",
-            state = "England"
-        ).toEntity()
-
-        dao.updateData(updatedData)
-        fetchedData = dao.getData()
-        assertThat(fetchedData).isEqualTo(updatedData)
-    }
-
-    @Test
-    @Throws(IOException::class)
-    fun setNewData() = runTest {
+    fun updateData_should_update_the_data() = runTest {
         val data = LocationInfo(
             name = "Pasig",
             latitude = 14.5605166,
@@ -141,22 +132,21 @@ class LocationInfoDaoTest {
         assertThat(fetchedData).isEqualTo(data)
 
         val data2 = LocationInfo(
-            name = "London",
+            name = "Pasig",
             latitude = 51.5073219,
             longitude = -0.1276474,
             country = "GB",
             state = "England"
         ).toEntity()
-        dao.setNewData(data2)
+        dao.updateData(data2)
 
         fetchedData = dao.getData()
-        assertThat(fetchedData).isNotEqualTo(data)
         assertThat(fetchedData).isEqualTo(data2)
     }
 
     @Test
     @Throws(IOException::class)
-    fun deleteData() = runTest {
+    fun deleteAllData_should_remove_all_data() = runTest {
         val data = LocationInfo(
             name = "Pasig",
             latitude = 14.5605166,
@@ -165,6 +155,7 @@ class LocationInfoDaoTest {
             state = null
         ).toEntity()
         dao.insertData(data)
+
         var fetchedData = dao.getData()
         assertThat(fetchedData).isEqualTo(data)
 
@@ -172,6 +163,34 @@ class LocationInfoDaoTest {
 
         fetchedData = dao.getData()
         assertThat(fetchedData).isEqualTo(null)
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun setNewData_should_clear_and_set_new_data() = runTest {
+        val data = LocationInfo(
+            name = "Pasig",
+            latitude = 14.5605166,
+            longitude = 121.0764343,
+            country = "PH",
+            state = null
+        ).toEntity()
+        dao.insertData(data)
+
+        var fetchedData = dao.getData()
+        assertThat(fetchedData).isEqualTo(data)
+
+        val data2 = LocationInfo(
+            name = "Pasig",
+            latitude = 51.5073219,
+            longitude = -0.1276474,
+            country = "GB",
+            state = "England"
+        ).toEntity()
+        dao.setNewData(data2)
+
+        fetchedData = dao.getData()
+        assertThat(fetchedData).isEqualTo(data2)
     }
 
 }

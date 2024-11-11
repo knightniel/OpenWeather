@@ -17,8 +17,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context, moshi: Moshi): AppDatabase {
         return AppDatabase.getInstance(context = context, moshi = moshi)
     }
