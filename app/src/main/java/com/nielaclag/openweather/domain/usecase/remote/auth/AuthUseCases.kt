@@ -8,5 +8,6 @@ import javax.inject.Inject
 data class AuthUseCases @Inject constructor(
     val userSignIn: UserSignIn,
     val userSignUp: UserSignUp,
-    val userSignOut: UserSignOut
+    val userSignOut: UserSignOut,
+    val getCurrentUser: GetCurrentUser
 )

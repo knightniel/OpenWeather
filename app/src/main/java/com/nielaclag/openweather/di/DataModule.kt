@@ -1,6 +1,7 @@
 package com.nielaclag.openweather.di
 
 import com.nielaclag.openweather.data.model.moshiadapter.JsonObjectAdapter
+import com.nielaclag.openweather.di.qualifier.StringConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -24,8 +25,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DataModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideMoshi(): Moshi {
         return Moshi
             .Builder()
@@ -35,6 +36,7 @@ object DataModule {
     }
 
     @Provides
+    @Singleton
     fun provideJsonConverter(moshi: Moshi): Converter.Factory {
         return MoshiConverterFactory
             .create(moshi)
@@ -42,8 +44,9 @@ object DataModule {
             .withNullSerialization()
     }
 
-    @StringConverter
     @Provides
+    @Singleton
+    @StringConverter
     fun provideStringConverter(): Converter.Factory {
         val mediaType = "text/plain".toMediaTypeOrNull()
         return object : Converter.Factory() {

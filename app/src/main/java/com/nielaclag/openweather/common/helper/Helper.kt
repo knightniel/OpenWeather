@@ -7,7 +7,6 @@ import com.nielaclag.openweather.common.constants.UtilConstants
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import timber.log.Timber
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -183,8 +182,8 @@ fun Context.findActivity(): Activity? = when (this) {
 }
 
 inline fun <reified T> ResponseBody.toJsonObject(moshi: Moshi): T? {
-    val jsonObject = JSONObject(charStream().readText())
-    return moshi.fromJson(jsonObject.toString())
+    val jsonObject = charStream().readText()
+    return moshi.fromJson(jsonObject)
 }
 
 fun ZonedDateTime.toLocalZonedDateTime(): ZonedDateTime {

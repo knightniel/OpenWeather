@@ -25,7 +25,7 @@ interface LocationInfoDao {
     suspend fun updateData(locationInfoEntity: LocationInfoEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertData(locationInfoEntity: LocationInfoEntity): Long
+    suspend fun insertData(locationInfoEntity: LocationInfoEntity)
 
     @Query("DELETE FROM location_info_tbl")
     suspend fun deleteAllData()
@@ -33,7 +33,7 @@ interface LocationInfoDao {
     @Transaction
     suspend fun setNewData(
         locationInfoEntity: LocationInfoEntity
-    ): Long {
+    ) {
         deleteAllData()
         return insertData(locationInfoEntity)
     }

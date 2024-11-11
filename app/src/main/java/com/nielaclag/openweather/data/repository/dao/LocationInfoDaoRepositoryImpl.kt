@@ -20,7 +20,7 @@ class LocationInfoDaoRepositoryImpl(
         return locationInfoDao.getData()
     }
 
-    override suspend fun insertData(locationInfoEntity: LocationInfoEntity): Long {
+    override suspend fun insertData(locationInfoEntity: LocationInfoEntity) {
         return locationInfoDao.insertData(locationInfoEntity)
     }
 
@@ -32,7 +32,7 @@ class LocationInfoDaoRepositoryImpl(
         locationInfoDao.updateData(locationInfoEntity)
     }
 
-    override suspend fun setNewData(locationInfoEntity: LocationInfoEntity): Long {
+    override suspend fun setNewData(locationInfoEntity: LocationInfoEntity) {
         return locationInfoDao.setNewData(locationInfoEntity)
     }
 

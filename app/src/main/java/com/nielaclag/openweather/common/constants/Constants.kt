@@ -7,18 +7,6 @@ import com.nielaclag.openweather.BuildConfig
  */
 object Constants {
 
-    val BASE_URL by lazy {
-        "https://base_url_not_defined/"
-    }
-
-    val OPEN_WEATHER_API_URL by lazy {
-        "https://api.openweathermap.org/"
-    }
-
-    val OPEN_WEATHER_URL by lazy {
-        "https://openweathermap.org/"
-    }
-
     val LOGGING_ENABLED by lazy {
         when (BuildConfig.BUILD_VARIANT) {
             "release" -> true
@@ -26,6 +14,10 @@ object Constants {
             "debug" -> true
             else -> false
         }
+    }
+
+    val OPEN_WEATHER_API_URL by lazy {
+        "https://api.openweathermap.org/"
     }
 
     val OPEN_WEATHER_API_KEY by lazy {

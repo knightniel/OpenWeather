@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -56,18 +57,26 @@ class LocationSelectionScreenViewModel @Inject constructor(
     val cityLocations: SnapshotStateList<LocationInfo> = _cityLocations
 
     private val _currentLocation = mutableStateOf<Location?>(null)
-    val currentLocation: State<Location?> = _currentLocation
 
     private val _gettingDeviceLocation = mutableStateOf(false)
     val gettingDeviceLocation: State<Boolean> = _gettingDeviceLocation
 
     init {
         locationInfo.value?.let { location ->
-            searchLocation(location.name)
+            searchLocation(
+                location = location.name
+            )
         }
     }
 
-    fun searchLocation(location: String) {
+    fun searchLocationByName(location: String) {
+        viewModelScope.launch {
+            clearLocationRequests()
+            searchLocation(location)
+        }
+    }
+
+    private fun searchLocation(location: String) {
         viewModelScope.launch {
             _searchLocationJob?.cancel()
             if (location.isBlank()) {
@@ -98,10 +107,10 @@ class LocationSelectionScreenViewModel @Inject constructor(
         }
     }
 
-    fun searchLocation(latitude: Double, longitude: Double) {
+    fun searchLocationByCoordinate(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             _currentLocation.value = null
-            _gettingDeviceLocation.value = false
+            clearLocationRequests()
             _searchLocationJob?.cancel()
             _searchLocationJob = openWeatherUseCases
                 .getLocationsByCoordinate(
@@ -116,7 +125,6 @@ class LocationSelectionScreenViewModel @Inject constructor(
                             _cityLocations.clear()
                         }
                         is Resource.Success -> {
-                            closeLocationListener()
                             _cityLocations.clear()
                             _cityLocations.addAll(result.data ?: arrayOf())
                         }
@@ -126,22 +134,17 @@ class LocationSelectionScreenViewModel @Inject constructor(
         }
     }
 
-    private fun readLocation(location: Location) {
-        viewModelScope.launch {
-            searchLocation(
-                latitude = location.latitude,
-                longitude = location.longitude
-            )
-        }
-    }
-
-    private fun closeLocationListener() {
+    private suspend fun clearLocationRequests() {
+        _gettingDeviceLocation.value = false
         fusedLocationClient.removeLocationUpdates(locationListener)
+        _searchLocation.emit(null)
     }
 
     override fun onCleared() {
         super.onCleared()
-        closeLocationListener()
+        runBlocking {
+            clearLocationRequests()
+        }
     }
 
     private val fusedLocationClient by lazy {
@@ -171,9 +174,10 @@ class LocationSelectionScreenViewModel @Inject constructor(
                             message = "Location Updated: lat: ${ location.latitude }, lon: ${ location.longitude }, accuracy: ${ location.accuracy }"
                         )
                         _currentLocation.value = location
-                        _gettingDeviceLocation.value = false
-                        readLocation(location)
-                        closeLocationListener()
+                        searchLocationByCoordinate(
+                            latitude = location.latitude,
+                            longitude = location.longitude
+                        )
                     }
                 }
             }
@@ -182,6 +186,10 @@ class LocationSelectionScreenViewModel @Inject constructor(
 
     fun useDeviceLocation() {
         viewModelScope.launch {
+            clearLocationRequests()
+        }
+        _searchLocationJob?.cancel()
+        _searchLocationJob = viewModelScope.launch {
             val withPermission = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val withGpsProvider = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -200,12 +208,12 @@ class LocationSelectionScreenViewModel @Inject constructor(
                     )
                 }
                 withPermission -> {
-                    _gettingDeviceLocation.value = false
                     _searchLocation.emit(Resource.Error("Please turn on device location."))
+                    clearLocationRequests()
                 }
                 else -> {
-                    _gettingDeviceLocation.value = false
                     _searchLocation.emit(Resource.Error("Location permission is required."))
+                    clearLocationRequests()
                 }
             }
         }

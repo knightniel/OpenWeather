@@ -15,15 +15,15 @@ interface OpenWeatherApi {
     suspend fun getLocationsByName(
         @Query("appid") appId: String,
         @Query("q") query: String,
-        @Query("limit") limit: Int,
+        @Query("limit") limit: Int
     ): Response<Array<LocationInfoDto>>
 
     @GET("geo/1.0/reverse")
-    suspend fun getLocationsByCoordinates(
+    suspend fun getLocationsByCoordinate(
         @Query("appid") appId: String,
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
-        @Query("limit") limit: Int,
+        @Query("limit") limit: Int
     ): Response<Array<LocationInfoDto>>
 
     @GET("data/2.5/weather")

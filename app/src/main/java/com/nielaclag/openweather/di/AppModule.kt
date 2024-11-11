@@ -21,8 +21,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideImageLoader(
         @ApplicationContext context: Context
     ): ImageLoader {

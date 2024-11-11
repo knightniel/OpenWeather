@@ -468,8 +468,10 @@ fun SignInPage(
                                 textDecoration = TextDecoration.Underline
                             )
                         ) to {
-                            multipleEventsCutter {
-                                onSignUp()
+                            if (!isSigningIn) {
+                                multipleEventsCutter {
+                                    onSignUp()
+                                }
                             }
                         }
                     )

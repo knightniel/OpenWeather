@@ -155,7 +155,7 @@ fun LocationSelectionScreen(
                 gettingDeviceLocation = gettingDeviceLocation,
                 onLocationTextChanged = { newLocation ->
                     location = newLocation
-                    locationSelectionScreenViewModel.searchLocation(newLocation)
+                    locationSelectionScreenViewModel.searchLocationByName(newLocation)
                 },
                 onUseCurrentLocation = {
                     permissionStateFineLocation.launchPermissionRequest()
@@ -219,7 +219,7 @@ fun LocationSelectionScreen(
                             ListError(
                                 errorMessage = (cityLocationsResponse?.message ?: "Something went wrong.") + "\nClick to retry.",
                                 onClick = {
-                                    locationSelectionScreenViewModel.searchLocation(location)
+                                    locationSelectionScreenViewModel.searchLocationByName(location)
                                 },
                                 modifier = Modifier
                                     .padding(

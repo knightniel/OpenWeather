@@ -1,8 +1,9 @@
 package com.nielaclag.openweather.domain.repository.remote
 
+import com.nielaclag.openweather.common.util.DataResponse
 import com.nielaclag.openweather.data.remote.dto.LocationInfoDto
+import com.nielaclag.openweather.data.remote.dto.OpenWeatherErrorDto
 import com.nielaclag.openweather.data.remote.dto.WeatherDto
-import retrofit2.Response
 
 /**
  * Created by Niel on 10/21/2024.
@@ -11,24 +12,22 @@ interface OpenWeatherRepository {
 
     suspend fun getLocationsByName(
         appId: String,
-        cityName: String,
-        stateCode: String,
-        countryCode: String,
+        query: String,
         limit: Int
-    ): Response<Array<LocationInfoDto>>
+    ): DataResponse<Array<LocationInfoDto>, OpenWeatherErrorDto>
 
-    suspend fun getLocationsByCoordinates(
+    suspend fun getLocationsByCoordinate(
         appId: String,
         latitude: Double,
         longitude: Double,
         limit: Int
-    ): Response<Array<LocationInfoDto>>
+    ): DataResponse<Array<LocationInfoDto>, OpenWeatherErrorDto>
 
     suspend fun getCurrentWeather(
         appId: String,
         latitude: Double,
         longitude: Double,
         units: String?
-    ): Response<WeatherDto>
+    ): DataResponse<WeatherDto, OpenWeatherErrorDto>
 
 }
